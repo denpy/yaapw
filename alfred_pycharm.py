@@ -33,9 +33,9 @@ def make_menu_items(messages):
             arg=msg,
             autocomplete=msg,
             # Split and lower case the message so when typing in Alfred it will find matching result for any part of
-            # the message case insensitively. For example when you type "production" Alfred will find "Music
-            # Production" as well
-            match=' '.join(re.split(r'\W', msg)).lower())
+            # the message case insensitively and by partial worlds too. 
+            # For example when you type "production" Alfred will find "Music Production" as well
+            match=' '.join(re.split(r'[\W\-_,]+', os.path.basename(msg))).lower())
 
         return msg_obj.copy()
 
