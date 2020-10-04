@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 #
-# FOO
+# https://github.com/denpy/yaapw
 #
+"""
+Script that filters project names from Pycharm menu items and prints them according to Alfred "Script Filter input"
+format (more info https://www.alfredapp.com/help/workflows/inputs/script-filter/), so Alfred will be able to present
+them in its UI
+"""
+
 import argparse
 import json
 import os
 import re
 from typing import Any, Dict, List, Union
 
-THIS_SCRIPT_VERSION = (2020, 9)
+THIS_SCRIPT_VERSION = (2020, 10)
 THIS_SCRIPT_VERSION_STR = '.'.join([str(d) for d in THIS_SCRIPT_VERSION])
 
 SKIP_PROJECTS = os.getenv('SKIP_PROJECTS')
@@ -33,7 +39,7 @@ def make_menu_items(messages):
             arg=msg,
             autocomplete=msg,
             # Split and lower case the message so when typing in Alfred it will find matching result for any part of
-            # the message case insensitively and by partial worlds too. 
+            # the message case insensitively and by partial worlds too.
             # For example when you type "production" Alfred will find "Music Production" as well
             match=' '.join(re.split(r'[\W\-_,]+', os.path.basename(msg))).lower())
 
@@ -53,19 +59,21 @@ def print_msg(msg_or_msgs: Union[str, list]):
     print(json.dumps(make_menu_items(msg_or_msgs)))
 
 
-def filter_proj_names(menu_items: str, items_2_skip: List[str]) -> List[str]:
+def filter_proj_names(items: str, items_2_skip: List[str]) -> List[str]:
     """
-    FOO
-    :param menu_items:
-    :param items_2_skip:
-    :return:
+    Filter project names from Pycharm menu items
+    :param items: Pycharm menu items
+    :param items_2_skip: Menu items to filter out
+    :return: project names
     """
     proj_names = []
-    menu_items = menu_items.strip('\n').split(MENU_ITEMS_DELIMITER)
-    for menu_item in menu_items:
+    items = items.strip('\n').split(MENU_ITEMS_DELIMITER)
+    for menu_item in items:
         menu_item = menu_item.strip()
 
-        # FOO explain this
+        # In order to get currently opened projects we need to traverse Pycharm "Window" menu, project names appear
+        # after "Previous Project Window" option, so once we see it we discard all previous items since they are not
+        # project names
         if menu_item == 'Previous Project Window':
             proj_names.clear()
             continue
@@ -79,24 +87,26 @@ def filter_proj_names(menu_items: str, items_2_skip: List[str]) -> List[str]:
 
 # noinspection PyShadowingNames
 def main(args):
-    if args.list_opened is not None:
-        opened_proj_names = filter_proj_names(args.list_opened, ['missing value'])
+    window_menu_items = args.opened_proj  # Items from "Window" menu
+    open_recent_menu_items = args.recent_proj  # Items from "File->Open recent" menu
+    if window_menu_items is not None:
+        opened_proj_names = filter_proj_names(window_menu_items, ['missing value'])
         print_msg(opened_proj_names)
-    elif args.list_recent is not None:
-        recent_proj = filter_proj_names(args.list_recent, ['missing value', 'Manage Projects...'])
+    elif open_recent_menu_items is not None:
+        recent_proj = filter_proj_names(open_recent_menu_items, ['missing value', 'Manage Projects...'])
         print_msg(recent_proj)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='This script allows to control Endel app playback on macOS',  add_help=True)
+        description='This script allows to open recent on currently open Pycharm project',  add_help=True)
     parser.add_argument(
         '--version', '-v', '-V', action='version', help='This script version', version=THIS_SCRIPT_VERSION_STR)
 
     # Create a group of mutually exclusive args (at least one is required)
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--list-opened', '-o', help='List currently opened projects')
-    group.add_argument('--list-recent', '-r', help='List recent projects')
+    group.add_argument('--opened-proj', '-o', help='List currently opened projects')
+    group.add_argument('--recent-proj', '-r', help='List recent projects')
 
     args = parser.parse_args()
     main(args)
