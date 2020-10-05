@@ -11,10 +11,16 @@ Just type **"charm"** in Alfred:
 Choose on of the options to see you opened or recent projects:
 ![](screenshots/opened_projects.png)
 
-Notes:
+##### Notes:
 - Tested with PycharmCE 2020.2 and Alfred 4.1.1.
 - This workflow requires Python 3.7 or later, if it's not in your `PATH` set `YAAPW_PYTHON_PATH` environment variabe to
  the Python executable path.
 - This Workflow uses AppleScript too, so make sure all needed permissions are set.
+
+
+##### TO DO:
+- Add workflow updater.
+- Run AppleScript scripts using bash version of "Run script" action.
+
 
 Icon by [Aquatikguru](https://www.kindpng.com/userpngs/3697/)
