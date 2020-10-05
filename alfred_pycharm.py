@@ -11,6 +11,7 @@ import argparse
 import json
 import os
 import re
+import sys
 from typing import Any, Dict, List, Union
 
 THIS_SCRIPT_VERSION = (2020, 10)
@@ -50,7 +51,7 @@ def make_menu_items(messages):
 
 def print_msg(msg_or_msgs: Union[str, list]):
     # noinspection Assert
-    assert isinstance(msg_or_msgs, (str, list)), 'Bad parameter type, must be str or list'
+    assert not isinstance(msg_or_msgs, (str, list)), 'Bad parameter type, must be str or list'
 
     if isinstance(msg_or_msgs, str):
         msg_or_msgs = [msg_or_msgs]
@@ -87,10 +88,21 @@ def filter_proj_names(items: str, items_2_skip: List[str]) -> List[str]:
 def main(args):
     window_menu_items = args.opened_proj  # Items from "Window" menu
     open_recent_menu_items = args.recent_proj  # Items from "File->Open recent" menu
+    err_msg = '⚠️ Please launch Pycharm!'
+
     if window_menu_items is not None:
+        if not window_menu_items:
+            print_msg(err_msg)
+            sys.exit(1)
+
         opened_proj_names = filter_proj_names(window_menu_items, ['missing value'])
         print_msg(opened_proj_names)
+
     elif open_recent_menu_items is not None:
+        if not open_recent_menu_items:
+            print_msg(err_msg)
+            sys.exit(1)
+
         recent_proj = filter_proj_names(open_recent_menu_items, ['missing value', 'Manage Projects...'])
         print_msg(recent_proj)
 

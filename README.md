@@ -1,6 +1,9 @@
 ## Yet another Alfred Pycharm Workflow
 
-This workflow allows a fast access to your recent and opened Pycharm projects.
+This workflow allows a fast access to your recent and opened Pycharm projects without launching a new instance of
+ Pycharm.
+
+Download the [workflow here](https://github.com/denpy/yaapw/raw/master/alfred_pycharm.alfredworkflow).
 
 Just type **"charm"** in Alfred:
 ![](screenshots/options.png)
