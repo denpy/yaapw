@@ -7,7 +7,6 @@ Script that filters project names from Pycharm menu items and prints them accord
 format (more info https://www.alfredapp.com/help/workflows/inputs/script-filter/), so Alfred will be able to present
 them in its UI
 """
-
 import argparse
 import json
 import os
@@ -22,7 +21,6 @@ MENU_ITEMS_DELIMITER = os.getenv('IFS')
 
 
 def make_menu_items(messages):
-    # noinspection PyShadowingNames
     def make_menu_item_obj(msg: str) -> Dict[str, Any]:
         """
         Makes a dict with fields that fit Alfred  format
